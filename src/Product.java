@@ -1,54 +1,30 @@
-class Product {
-    private String name;
-    private LocalDate expirationDate;
-    private LocalDate arrivalDate;
-    private String manufacturer;
-    private String measurementUnit;
-    private double quantity;
-    private String location;
-    private String comment;
+public class Product {
+    String name;
+    String expiryDate;
+    String arrivalDate;
+    String manufacturer;
+    String unit;
+    double quantity;
+    Location location;
+    String comment;
 
-    public Product(String name, LocalDate expirationDate, LocalDate arrivalDate,
-                   String manufacturer, String measurementUnit, double quantity,
-                   String location, String comment) {
+    public Product(String name, String expiryDate, String arrivalDate, String manufacturer,
+                   String unit, double quantity, Location location, String comment) {
         this.name = name;
-        this.expirationDate = expirationDate;
+        this.expiryDate = expiryDate;
         this.arrivalDate = arrivalDate;
         this.manufacturer = manufacturer;
-        this.measurementUnit = measurementUnit;
+        this.unit = unit;
         this.quantity = quantity;
         this.location = location;
         this.comment = comment;
     }
 
-    public String getName() {
-        return name;
-    }
+    public String getName() { return name; }
+    public double getQuantity() { return quantity; }
 
-    public LocalDate getExpirationDate() {
-        return expirationDate;
+    public String toString() {
+        return name + " (" + quantity + " " + unit + "), Производител: " + manufacturer +
+               ", Срок: " + expiryDate + ", Местоположение: " + location;
     }
-
-    public LocalDate getArrivalDate() {
-        return arrivalDate;
-    }
-
-    public String getManufacturer() {
-        return manufacturer;
-    }
-
-    public String getMeasurementUnit() {
-        return measurementUnit;
-    }
-
-    public double getQuantity() {
-        return quantity;
-    }
-
-    public String getLocation() {
-        return location;
-    }
-
-    public String getComment() {
-        return comment;
-    }
+}
