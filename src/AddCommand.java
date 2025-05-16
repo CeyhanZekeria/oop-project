@@ -29,7 +29,6 @@ public class AddCommand implements Command {
         System.out.print("Количество: ");
         double quantity = Double.parseDouble(scanner.nextLine());
 
-        // 🔁 Цикъл за въвеждане на местоположение, докато не е свободно
         Location location = null;
         while (true) {
             System.out.print("Местоположение (секция/рафт/номер): ");
@@ -39,7 +38,7 @@ public class AddCommand implements Command {
             if (service.isLocationOccupied(location)) {
                 System.out.println("Местоположението " + location + " вече е заето! Моля, опитайте друго.");
             } else {
-                break; // свободно е → излизаме от цикъла
+                break;
             }
         }
 
