@@ -2,34 +2,78 @@ import java.util.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Основна услуга за управление на складовите данни.
+ * Поддържа списъци с продукти и логове на действия.
+ */
 public class WarehouseService {
     private List<Product> products = new ArrayList<>();
     private List<LogEntry> logs = new ArrayList<>();
     private String currentFileName;
 
+    /**
+     * Добавя продукт в склада и записва действието в логовете.
+     */
     public void addProduct(Product product) {
         products.add(product);
         logChange("add", product);
     }
 
+    /**
+     * Премахва продукт от склада и записва действието в логовете.
+     */
     public void removeProduct(Product product) {
         products.remove(product);
         logChange("remove", product);
     }
 
+    /**
+     * Записва лог запис за дадено действие върху продукт.
+     */
     public void logChange(String action, Product product) {
         String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         logs.add(new LogEntry(action, product, timestamp));
     }
 
-    public List<Product> getProducts() { return products; }
-    public void setProducts(List<Product> products) { this.products = products; }
+    /**
+     * Връща списъка с продукти.
+     */
+    public List<Product> getProducts() {
+        return products;
+    }
 
-    public List<LogEntry> getLogs() { return logs; }
+    /**
+     * Задава нов списък с продукти.
+     */
+    public void setProducts(List<Product> products) {
+        this.products = products;
+    }
 
-    public String getCurrentFileName() { return currentFileName; }
-    public void setCurrentFileName(String fileName) { this.currentFileName = fileName; }
+    /**
+     * Връща списъка с лог записи.
+     */
+    public List<LogEntry> getLogs() {
+        return logs;
+    }
 
+    /**
+     * Връща името на текущо отворения файл.
+     */
+    public String getCurrentFileName() {
+        return currentFileName;
+    }
+
+    /**
+     * Задава името на текущо отворения файл.
+     */
+    public void setCurrentFileName(String fileName) {
+        this.currentFileName = fileName;
+    }
+
+    /**
+     * Извежда всички продукти в склада.
+     * Ако няма продукти, информира потребителя.
+     */
     public void printProducts() {
         if (products.isEmpty()) {
             System.out.println("Складът е празен.");
@@ -39,6 +83,10 @@ public class WarehouseService {
             }
         }
     }
+
+    /**
+     * Проверява дали дадено местоположение вече е заето от продукт.
+     */
     public boolean isLocationOccupied(Location location) {
         for (Product p : products) {
             if (p.location.toString().equals(location.toString())) {

@@ -1,8 +1,16 @@
+
 import java.io.*;
 import java.util.*;
 
+/**
+ * Клас за работа с файлове — запис и зареждане на продукти от файл.
+ */
 public class FileManager {
 
+    /**
+     * Записва списък с продукти във файл.
+     * Всеки продукт се записва на отделен ред с разделител "|".
+     */
     public void saveToFile(List<Product> products, String filename) {
         try (PrintWriter writer = new PrintWriter(new FileWriter(filename))) {
             for (Product p : products) {
@@ -16,6 +24,12 @@ public class FileManager {
         }
     }
 
+    /**
+     * Зарежда списък с продукти от файл.
+     * Всеки ред от файла се парсва в обект от тип Product.
+     *
+     * @return списък с прочетените продукти
+     */
     public List<Product> loadFromFile(String filename) {
         List<Product> products = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {

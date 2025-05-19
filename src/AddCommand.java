@@ -1,14 +1,26 @@
+
 import java.util.Scanner;
 
+/**
+ * Команда за добавяне на нов продукт в склада.
+ * Изисква въвеждане на информация от потребителя чрез конзолата.
+ */
 public class AddCommand implements Command {
     private WarehouseService service;
     private Scanner scanner;
 
+    /**
+     * Създава инстанция на AddCommand с достъп до склада и вход от потребителя.
+     */
     public AddCommand(WarehouseService service, Scanner scanner) {
         this.service = service;
         this.scanner = scanner;
     }
 
+    /**
+     * Изпълнява добавянето на продукт в склада.
+     * Включва въвеждане на данни и проверка за свободно местоположение.
+     */
     @Override
     public void execute() {
         System.out.print("Име: ");

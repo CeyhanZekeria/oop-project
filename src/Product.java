@@ -1,3 +1,8 @@
+
+/**
+ * Клас, представляващ продукт в склада.
+ * Съдържа информация като име, дати, производител, количество и местоположение.
+ */
 public class Product {
     String name;
     String expiryDate;
@@ -8,6 +13,9 @@ public class Product {
     Location location;
     String comment;
 
+    /**
+     * Създава инстанция на Product с пълна информация за продукта.
+     */
     public Product(String name, String expiryDate, String arrivalDate, String manufacturer,
                    String unit, double quantity, Location location, String comment) {
         this.name = name;
@@ -20,9 +28,23 @@ public class Product {
         this.comment = comment;
     }
 
-    public String getName() { return name; }
-    public double getQuantity() { return quantity; }
+    /**
+     * Връща името на продукта.
+     */
+    public String getName() {
+        return name;
+    }
 
+    /**
+     * Връща количеството на продукта.
+     */
+    public double getQuantity() {
+        return quantity;
+    }
+
+    /**
+     * Връща текстово представяне на продукта.
+     */
     public String toString() {
         return name + " (" + quantity + " " + unit + "), Производител: " + manufacturer +
                ", Срок: " + expiryDate + ", Местоположение: " + location;

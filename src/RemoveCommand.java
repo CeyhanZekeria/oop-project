@@ -1,17 +1,28 @@
+
 import java.util.Scanner;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+/**
+ * Команда за изваждане на дадено количество от конкретен продукт в склада.
+ */
 public class RemoveCommand implements Command {
     private WarehouseService service;
     private Scanner scanner;
 
+    /**
+     * Създава инстанция на RemoveCommand с достъп до склада и вход от потребителя.
+     */
     public RemoveCommand(WarehouseService service, Scanner scanner) {
         this.service = service;
         this.scanner = scanner;
     }
 
+    /**
+     * Изпълнява командата за изваждане на количество от даден продукт.
+     * Ако количеството не достига, се премахва наличното и се логват действията.
+     */
     @Override
     public void execute() {
         System.out.print("Име на продукт за изваждане: ");
