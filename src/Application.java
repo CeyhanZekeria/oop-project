@@ -12,3 +12,6 @@ public class Application {
         WarehouseCLI.start();
     }
 }
+//chcp 65001
+//javac *.java
+//java Application.java

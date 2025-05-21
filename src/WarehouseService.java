@@ -41,7 +41,21 @@ public class WarehouseService {
     public List<Product> getProducts() {
         return products;
     }
-
+    /**
+     * Връща списък с всички продукти, които съвпадат по име (без значение от срока).
+     *
+     * @param name името на продукта за търсене
+     * @return списък с продукти с даденото име (може да са с различен срок или партида)
+     */
+    public List<Product> findProductsByName(String name) {
+        List<Product> result = new ArrayList<>();
+        for (Product p : products) {
+            if (p.getName().equalsIgnoreCase(name)) {
+                result.add(p);
+            }
+        }
+        return result;
+    }
     /**
      * Задава нов списък с продукти.
      */
