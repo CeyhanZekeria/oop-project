@@ -1,6 +1,4 @@
 import java.util.*;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 
 /**
  * Команда за изваждане на продукти от склада по зададено име и количество.
@@ -46,8 +44,8 @@ public class RemoveCommand implements Command {
             return;
         }
 
-        // Сортиране по най-ранен срок на годност
-        matching.sort(Comparator.comparing(p -> LocalDate.parse(p.expiryDate)));
+
+        matching.sort(Comparator.comparing(Product::getExpiryDate));
 
         double remaining = quantityToRemove;
         List<Product> toRemoveLogs = new ArrayList<>();
@@ -61,21 +59,21 @@ public class RemoveCommand implements Command {
                 remaining -= available;
                 service.getProducts().remove(p);
                 toRemoveLogs.add(p);
-                System.out.println("Премахнато: " + available + " от " + p.getName() + " на " + p.location);
+                System.out.println("Премахнато: " + available + " от " + p.getName() + " на " + p.getLocation());
             } else {
                 double newQuantity = available - remaining;
 
-                Product updated = new Product(p.name, p.expiryDate, p.arrivalDate, p.manufacturer,
-                        p.unit, newQuantity, p.location, p.comment);
+                Product updated = new Product(p.getName(), p.getExpiryDate(), p.getArrivalDate(),
+                        p.getManufacturer(), p.getUnit(), newQuantity, p.getLocation(), p.getComment());
 
                 service.getProducts().remove(p);
                 service.getProducts().add(updated);
 
-                Product removedPart = new Product(p.name, p.expiryDate, p.arrivalDate, p.manufacturer,
-                        p.unit, remaining, p.location, p.comment);
+                Product removedPart = new Product(p.getName(), p.getExpiryDate(), p.getArrivalDate(),
+                        p.getManufacturer(), p.getUnit(), remaining, p.getLocation(), p.getComment());
 
                 toRemoveLogs.add(removedPart);
-                System.out.println("Премахнато: " + remaining + " от " + p.getName() + " на " + p.location);
+                System.out.println("Премахнато: " + remaining + " от " + p.getName() + " на " + p.getLocation());
                 remaining = 0;
             }
         }
@@ -90,7 +88,7 @@ public class RemoveCommand implements Command {
             }
         }
 
-        // Запис в лог
+
         for (Product p : toRemoveLogs) {
             service.logChange("remove", p);
         }

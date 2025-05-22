@@ -41,6 +41,7 @@ public class WarehouseService {
     public List<Product> getProducts() {
         return products;
     }
+
     /**
      * Връща списък с всички продукти, които съвпадат по име (без значение от срока).
      *
@@ -56,6 +57,7 @@ public class WarehouseService {
         }
         return result;
     }
+
     /**
      * Задава нов списък с продукти.
      */
@@ -103,7 +105,7 @@ public class WarehouseService {
      */
     public boolean isLocationOccupied(Location location) {
         for (Product p : products) {
-            if (p.location.toString().equals(location.toString())) {
+            if (p.getLocation().toString().equals(location.toString())) {
                 return true;
             }
         }

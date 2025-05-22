@@ -5,8 +5,7 @@ import java.util.List;
 /**
  * Команда за добавяне на нов продукт в склада.
  * Извършва пълна валидация на въведените данни и проверява за съвпадения
- * на име и срок на годност. Позволява добавяне към съществуващи партиди
- * или създаване на нови при различен срок.
+ * на име и срок на годност. Спазва правилата за добавяне към съществуваща партида или създаване на нова.
  */
 public class AddCommand implements Command {
     private WarehouseService service;
@@ -17,122 +16,125 @@ public class AddCommand implements Command {
         this.scanner = scanner;
     }
 
-    /**
-     * Проверява дали низът съдържа цифри.
-     */
     private boolean containsDigit(String input) {
         return input.matches(".*\\d.*");
     }
 
-    /**
-     * Проверява дали даден низ е валидна дата.
-     */
-    private boolean isValidDate(String dateStr) {
-        try {
-            LocalDate.parse(dateStr);
-            return true;
-        } catch (Exception e) {
-            return false;
+    private String promptNonDigitInput(String label) {
+        while (true) {
+            System.out.print(label + ": ");
+            String input = scanner.nextLine().trim();
+            if (!containsDigit(input)) return input;
+            System.out.println(label + " не трябва да съдържа цифри!");
         }
     }
 
-    /**
-     * Изпълнява логиката за добавяне на продукт:
-     * валидира входа, проверява за партиди със същото име и срок,
-     * изисква местоположение и добавя продукта в склада.
-     */
-    @Override
-    public void execute() {
-        String name;
+    private LocalDate promptValidDate(String label) {
         while (true) {
-            System.out.print("Име: ");
-            name = scanner.nextLine().trim();
-            if (!containsDigit(name)) break;
-            System.out.println("Името не трябва да съдържа цифри!");
-        }
-
-        String expiry;
-        while (true) {
-            System.out.print("Срок на годност (YYYY-MM-DD): ");
-            expiry = scanner.nextLine().trim();
-            if (isValidDate(expiry)) break;
-            System.out.println("Невалиден формат за дата!");
-        }
-
-        String arrival;
-        while (true) {
-            System.out.print("Дата на постъпване (YYYY-MM-DD): ");
-            arrival = scanner.nextLine().trim();
-            if (isValidDate(arrival)) break;
-            System.out.println("Невалиден формат за дата!");
-        }
-
-        String manufacturer;
-        while (true) {
-            System.out.print("Производител: ");
-            manufacturer = scanner.nextLine().trim();
-            if (!containsDigit(manufacturer)) break;
-            System.out.println("Производителят не трябва да съдържа цифри!");
-        }
-
-        String unit;
-        while (true) {
-            System.out.print("Единица (kg/l): ");
-            unit = scanner.nextLine().trim();
-            if (!containsDigit(unit)) break;
-            System.out.println("Мерната единица не трябва да съдържа цифри!");
-        }
-
-        double quantity;
-        while (true) {
-            System.out.print("Количество: ");
+            System.out.print(label + " (YYYY-MM-DD): ");
+            String input = scanner.nextLine().trim();
             try {
-                quantity = Double.parseDouble(scanner.nextLine().trim());
-                if (quantity > 0) break;
-                System.out.println("Количество трябва да е положително число!");
+                return LocalDate.parse(input);
+            } catch (Exception e) {
+                System.out.println("Невалиден формат за дата!");
+            }
+        }
+    }
+
+    private double promptPositiveDouble(String label) {
+        while (true) {
+            System.out.print(label + ": ");
+            try {
+                double val = Double.parseDouble(scanner.nextLine().trim());
+                if (val > 0) return val;
+                System.out.println(label + " трябва да е положително число!");
             } catch (NumberFormatException e) {
                 System.out.println("Моля, въведете валидно число!");
             }
         }
+    }
 
-        Location location = null;
-        boolean validLocation = false;
+    /**
+     * Изпълнява командата за добавяне на продукт:
+     * валидира входа, проверява за партиди със същото име и срок,
+     * добавя към съществуваща или създава нова партида,
+     * и извежда текущото общо количество на продукта по име.
+     */
+    @Override
+    public void execute() {
+        String name = promptNonDigitInput("Име");
 
         List<Product> sameNameProducts = service.findProductsByName(name);
-        boolean sameExpiryExists = false;
-        boolean differentExpiryExists = false;
-
+        double totalQuantity = 0.0;
         for (Product p : sameNameProducts) {
-            if (p.expiryDate.equals(expiry)) sameExpiryExists = true;
-            else differentExpiryExists = true;
+            totalQuantity += p.getQuantity();
+        }
+        System.out.println("Общо количество налично за \"" + name + "\": " + totalQuantity);
+
+        LocalDate expiryDate = promptValidDate("Срок на годност");
+        LocalDate arrivalDate = promptValidDate("Дата на постъпване");
+        String manufacturer = promptNonDigitInput("Производител");
+        String unit = promptNonDigitInput("Единица (kg/l)");
+        double quantity = promptPositiveDouble("Количество");
+
+        System.out.print("Коментар: ");
+        String comment = scanner.nextLine().trim();
+
+        for (Product existing : sameNameProducts) {
+            if (existing.getExpiryDate().equals(expiryDate)) {
+                double newQuantity = existing.getQuantity() + quantity;
+                Product updated = new Product(
+                        existing.getName(),
+                        existing.getExpiryDate(),
+                        existing.getArrivalDate(),
+                        existing.getManufacturer(),
+                        existing.getUnit(),
+                        newQuantity,
+                        existing.getLocation(),
+                        existing.getComment() + " | + " + comment
+                );
+
+                service.getProducts().remove(existing);
+                service.addProduct(updated);
+                System.out.println("Продуктът беше добавен към съществуваща партида на същото място.");
+
+                double newTotal = calculateTotalQuantityByName(name);
+                System.out.println("Текущо общо количество за \"" + name + "\": " + newTotal);
+                return;
+            }
         }
 
-        while (!validLocation) {
+        Location location = null;
+        while (true) {
             System.out.print("Местоположение (секция/рафт/номер): ");
-            String[] loc = scanner.nextLine().split("/");
+            String[] loc = scanner.nextLine().trim().split("/");
             if (loc.length != 3) {
                 System.out.println("Местоположението трябва да е във формат секция/рафт/номер");
                 continue;
             }
-            location = new Location(loc[0], loc[1], loc[2]);
+
+            location = new Location(loc[0].trim(), loc[1].trim(), loc[2].trim());
 
             if (service.isLocationOccupied(location)) {
                 System.out.println("Местоположението " + location + " е заето!");
             } else {
-                validLocation = true;
+                break;
             }
         }
 
-        String comment;
-        while (true) {
-            System.out.print("Коментар: ");
-            comment = scanner.nextLine().trim();
-            if (!containsDigit(comment)) break;
-            System.out.println("Коментарът не трябва да съдържа числа!");
-        }
-
-        Product product = new Product(name, expiry, arrival, manufacturer, unit, quantity, location, comment);
+        Product product = new Product(name, expiryDate, arrivalDate, manufacturer, unit, quantity, location, comment);
         service.addProduct(product);
-        System.out.println("Продуктът беше добавен успешно.");
+        System.out.println("Продуктът беше добавен като нова партида на ново място.");
+
+        double newTotal = calculateTotalQuantityByName(name);
+        System.out.println("Текущо общо количество за \"" + name + "\": " + newTotal);
+    }
+
+    private double calculateTotalQuantityByName(String name) {
+        double total = 0.0;
+        for (Product p : service.findProductsByName(name)) {
+            total += p.getQuantity();
+        }
+        return total;
     }
 }

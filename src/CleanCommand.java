@@ -1,6 +1,4 @@
-
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.Iterator;
 
 /**
@@ -23,18 +21,15 @@ public class CleanCommand implements Command {
     @Override
     public void execute() {
         LocalDate now = LocalDate.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-
         Iterator<Product> iterator = service.getProducts().iterator();
         int removedCount = 0;
 
         while (iterator.hasNext()) {
             Product p = iterator.next();
-            LocalDate expiry = LocalDate.parse(p.expiryDate, formatter);
-            if (!expiry.isAfter(now)) {
+            if (!p.getExpiryDate().isAfter(now)) {
                 System.out.println("Премахнат продукт: " + p);
-                iterator.remove();
-                service.removeProduct(p);
+                iterator.remove();           // Премахване от локалния списък
+                service.removeProduct(p);   // Премахване от услугата
                 removedCount++;
             }
         }
