@@ -28,8 +28,8 @@ public class CleanCommand implements Command {
             Product p = iterator.next();
             if (!p.getExpiryDate().isAfter(now)) {
                 System.out.println("Премахнат продукт: " + p);
-                iterator.remove();           // Премахване от локалния списък
-                service.removeProduct(p);   // Премахване от услугата
+                iterator.remove();
+                service.removeProduct(p);
                 removedCount++;
             }
         }

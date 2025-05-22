@@ -25,7 +25,7 @@ public class OpenCommand implements Command {
     @Override
     public void execute() {
         System.out.print("Въведи име на файл за отваряне: ");
-        String filename = scanner.nextLine();
+        String filename = scanner.nextLine().trim();
         service.setProducts(fileManager.loadFromFile(filename));
         service.setCurrentFileName(filename);
     }

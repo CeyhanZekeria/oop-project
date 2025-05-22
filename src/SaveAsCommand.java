@@ -23,9 +23,10 @@ public class SaveAsCommand implements Command {
      * Задава новото име на файла като текущо.
      */
     @Override
-    public void execute() {
+    public void execute()
+    {
         System.out.print("Въведи име на файл за запис: ");
-        String filename = scanner.nextLine();
+        String filename = scanner.nextLine().trim();
         fileManager.saveToFile(service.getProducts(), filename);
         service.setCurrentFileName(filename);
     }
