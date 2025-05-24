@@ -32,27 +32,30 @@ public class FileManager {
      */
     public List<Product> loadFromFile(String filename) {
         List<Product> products = new ArrayList<>();
-        try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] parts = line.split("\\|");
-                if (parts.length == 8) {
-                    String[] loc = parts[6].split("/");
-                    Location location = new Location(loc[0].trim(), loc[1].trim(), loc[2].trim());
+        try (BufferedReader reader = new BufferedReader(new FileReader("C:\\Users\\ceyha\\IdeaProjects\\oopProjectStorage\\out\\listLocation\\" + filename.trim())))
+        {
 
-                    Product p = new Product(
-                            parts[0],
-                            LocalDate.parse(parts[1]),
-                            LocalDate.parse(parts[2]),
-                            parts[3],
-                            parts[4],
-                            Double.parseDouble(parts[5]),
-                            location,
-                            parts[7]
-                    );
-                    products.add(p);
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    String[] parts = line.split("\\|");
+                    if (parts.length == 8) {
+                        String[] loc = parts[6].split("/");
+                        Location location = new Location(loc[0].trim(), loc[1].trim(), loc[2].trim());
+
+                        Product p = new Product(
+                                parts[0],
+                                LocalDate.parse(parts[1]),
+                                LocalDate.parse(parts[2]),
+                                parts[3],
+                                parts[4],
+                                Double.parseDouble(parts[5]),
+                                location,
+                                parts[7]
+                        );
+                        products.add(p);
+                    }
                 }
-            }
+
         } catch (IOException e) {
             System.out.println("Грешка при четене: " + e.getMessage());
         } catch (Exception e) {
